@@ -1,0 +1,147 @@
+for i = 1,1 do 
+	game.StarterGui:SetCore("SendNotification", {
+		Title = "Made By Ashplayesbrb",
+		Text = "Unreal Hub Anti Hit",
+		Icon = "",
+		Duration = 1,
+	})
+end
+
+local InsertedObjects = Instance.new("ScreenGui")
+local Gradient = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local player = Instance.new("TextLabel")
+local UICorner = Instance.new("UICorner")
+local UIGradient = Instance.new("UIGradient")
+local LoopDetector = Instance.new("TextLabel")
+
+--Properties:
+
+InsertedObjects.ResetOnSpawn = false
+InsertedObjects.Name = "InsertedObjects"
+InsertedObjects.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+Gradient.Name = "Gradient"
+Gradient.Parent = InsertedObjects
+Gradient.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Gradient.BackgroundTransparency = 0.500
+Gradient.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Gradient.BorderSizePixel = 0
+Gradient.Position = UDim2.new(0.132243678, 0, 0.289999992, 0)
+Gradient.Size = UDim2.new(0, 116, 0, 154)
+Gradient.Active = true
+Gradient.Draggable = true
+
+Title.Name = "Title"
+Title.Parent = Gradient
+Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Title.BackgroundTransparency = 1.000
+Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Title.BorderSizePixel = 0
+Title.Size = UDim2.new(0, 116, 0, 34)
+Title.Font = Enum.Font.FredokaOne
+Title.Text = "Unreal AntiHit"
+Title.TextColor3 = Color3.fromRGB(255, 170, 0)
+Title.TextSize = 16.000
+Title.TextStrokeTransparency = 0.000
+
+player.Name = "player"
+player.Parent = Gradient
+player.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+player.BackgroundTransparency = 1.000
+player.BorderColor3 = Color3.fromRGB(0, 0, 0)
+player.BorderSizePixel = 0
+player.Position = UDim2.new(0, 0, 0.474026084, 0)
+player.Size = UDim2.new(0, 116, 0, 34)
+player.Font = Enum.Font.FredokaOne
+player.Text = ""
+player.TextColor3 = Color3.fromRGB(255, 170, 0)
+player.TextSize = 13.000
+player.TextStrokeTransparency = 0.000
+player.TextWrapped = true
+
+UICorner.Parent = Gradient
+
+UIGradient.Parent = Gradient
+
+LoopDetector.Name = "LoopDetector"
+LoopDetector.Parent = Gradient
+LoopDetector.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+LoopDetector.BackgroundTransparency = 1.000
+LoopDetector.BorderColor3 = Color3.fromRGB(0, 0, 0)
+LoopDetector.BorderSizePixel = 0
+LoopDetector.Position = UDim2.new(0, 0, 0.649350762, 0)
+LoopDetector.Size = UDim2.new(0, 116, 0, 34)
+LoopDetector.Font = Enum.Font.FredokaOne
+LoopDetector.Text = ""
+LoopDetector.TextColor3 = Color3.fromRGB(255, 170, 0)
+LoopDetector.TextSize = 13.000
+LoopDetector.TextStrokeTransparency = 0.000
+LoopDetector.TextWrapped = true
+
+-- Scripts:
+
+local function CYBH_fake_script() -- Gradient.LocalScript 
+	local script = Instance.new('LocalScript', Gradient)
+
+	local UIS = game:GetService("UserInputService")
+	function dragify(Frame)
+		dragToggle = nil
+		local dragSpeed = 0
+		dragInput = nil
+		dragStart = nil
+		local dragPos = nil
+		function updateInput(input)
+			local Delta = input.Position - dragStart
+			local Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + Delta.X, startPos.Y.Scale, startPos.Y.Offset + Delta.Y)
+			game:GetService("TweenService"):Create(Frame, TweenInfo.new(0.25), {Position = Position}):Play()
+		end
+		Frame.InputBegan:Connect(function(input)
+			if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and UIS:GetFocusedTextBox() == nil then
+				dragToggle = true
+				dragStart = input.Position
+				startPos = Frame.Position
+				input.Changed:Connect(function()
+					if input.UserInputState == Enum.UserInputState.End then
+						dragToggle = false
+					end
+				end)
+			end
+		end)
+		Frame.InputChanged:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+				dragInput = input
+			end
+		end)
+		game:GetService("UserInputService").InputChanged:Connect(function(input)
+			if input == dragInput and dragToggle then
+				updateInput(input)
+			end
+		end)
+	end
+
+	dragify(script.Parent)
+end
+coroutine.wrap(CYBH_fake_script)()
+
+coroutine.wrap(function()
+	game:GetService("RunService").RenderStepped:connect(function()
+		pcall(function()
+			if game.Players.LocalPlayer.Character.Humanoid:FindFirstChild("creator") then
+				player.Text = tostring(game.Players.LocalPlayer.Character.Humanoid.creator.Value).." Hit you"
+			elseif not game.Players.LocalPlayer.Character.Humanoid:FindFirstChild("creator") then
+				player.Text = ''
+			end
+		end)
+	end)
+end)()
+
+coroutine.wrap(function()
+	game:GetService("RunService").RenderStepped:connect(function()
+		if player.Text ~= '' then
+			game.ReplicatedStorage.Remotes.Human_Punch:FireServer(game.Players.LocalPlayer.Character.RightHand, "RightPunch", workspace[tostring(game.Players.LocalPlayer.Character.Humanoid:FindFirstChild("creator").Value)].UpperTorso,5,true,"RightPunch",game.Players.LocalPlayer.Backpack.Boxing.Handle.Hit,5)
+			game.ReplicatedStorage.Remotes.Human_Punch:FireServer(game.Players.LocalPlayer.Character.LeftHand, "LeftPunch", workspace[tostring(game.Players.LocalPlayer.Character.Humanoid:FindFirstChild("creator").Value)].UpperTorso,5,true,"LeftPunch",game.Players.LocalPlayer.Backpack.Boxing.Handle.Hit,5)
+		else
+		end
+	end)
+end)()
